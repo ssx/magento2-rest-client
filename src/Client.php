@@ -563,4 +563,81 @@ class Client
 
         return $this->handleResponse($response);
     }
+
+    /**
+     * Create a product with the given fields.
+     *
+     * @param $fields
+     * @return mixed
+     * @throws Authentication
+     * @throws RequestFailed
+     */
+    public function createProduct($fields)
+    {
+        $response = $this->getClient()->request(
+            'POST',
+            $this->baseUrl . '/rest/default/V1/products',
+            [
+                'json' => [ 'product' => $fields ]
+            ]
+        );
+
+        return $this->handleResponse($response);
+    }
+
+    /**
+     * Update a product with the given sku and fields.
+     *
+     * @param $sku
+     * @param $fields
+     * @return mixed
+     * @throws Authentication
+     * @throws RequestFailed
+     */
+    public function updateProduct($sku, $fields)
+    {
+        $response = $this->getClient()->request(
+            'PUT',
+            $this->baseUrl . '/rest/V1/products/'.$sku,
+            [
+                'json' => [ 'product' => $fields ]
+            ]
+        );
+
+        return $this->handleResponse($response);
+    }
+
+    /**
+     * Update a product with the given sku and fields.
+     *
+     * @param $sku
+     * @param $fields
+     * @return mixed
+     * @throws Authentication
+     * @throws RequestFailed
+     */
+    public function updateProductCustomAttributes($sku, $product_fields, $fields)
+    {
+        $custom_attribs = [];
+        foreach ($fields as $field => $value) {
+            $custom_attribs[] = [
+                'attribute_code' => $field,
+                'value' => $value
+            ];
+        };
+
+        $response = $this->getClient()->request(
+            'PUT',
+            $this->baseUrl . '/rest/V1/products/' . $sku,
+            [
+                'json' => [
+                    'product' => array_merge($product_fields, [
+                        'custom_attributes' => $custom_attribs
+                    ])
+                ]
+            ]
+        );
+
+        return $this->handleResponse($response);
+    }
 }
